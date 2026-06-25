@@ -20,10 +20,38 @@ function deriveSystemState(log: SlateLog) {
   const mode = workToday === "yes" ? "Execution" : "Recovery / Build";
   const recoveryRisk = cognitiveLoad === "high" && energy <= 5 ? "Elevated" : "Low";
   const recommendation =
-    energy <= 4 || recoveryRisk === "Elevated" ? "Strict Floor"
+    workToday === "no" ? "Recovery"
+    : energy <= 4 || recoveryRisk === "Elevated" ? "Strict Floor"
     : energy >= 8 ? "Deep Work"
     : "Standard Plan";
   return { energy, capacity, mode, recoveryRisk, recommendation };
+}
+
+const NEXT_ACTION_COPY: Record<string, string> = {
+  "Deep Work":      "Single objective. Protect focus.",
+  "Standard Plan":  "Execute intentionally. Stop before fatigue compounds.",
+  "Strict Floor":   "Protect recovery. Minimum viable execution.",
+  "Recovery":       "Reduce load. Prepare for tomorrow.",
+};
+
+const EFFORT_MAP: Record<string, string> = {
+  "Deep Work":     "High",
+  "Standard Plan": "Moderate",
+  "Strict Floor":  "Low",
+  "Recovery":      "Low",
+};
+
+function extractFirstTask(blocks: string[]): string {
+  if (!blocks.length) return "Begin floor block";
+  const first = blocks[0];
+  // strip leading time range if present (e.g. "7:15–7:40 → python (25 min)" → "python (25 min)")
+  const arrow = first.indexOf("→");
+  return arrow !== -1 ? first.slice(arrow + 1).trim() : first;
+}
+
+function extractShutdown(closingLine: string): string | null {
+  const match = closingLine.match(/\b(\d{1,2}:\d{2})\b/);
+  return match ? match[1] : null;
 }
 
 function computeInsights(logs: SlateLog[]) {
@@ -35,6 +63,107 @@ function computeInsights(logs: SlateLog[]) {
   for (const l of logs) if (l.input.constraint) freq[l.input.constraint] = (freq[l.input.constraint] ?? 0) + 1;
   const topConstraint = Object.entries(freq).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
   return { total: logs.length, avgEnergy, workDays, trainingDays, topConstraint };
+}
+
+// ── next action card ─────────────────────────────────────────────────────────
+
+function NextActionCard({ log }: { log: SlateLog | null }) {
+  const [hovered, setHovered] = useState(false);
+
+  if (!log) {
+    return (
+      <div
+        className="noise relative w-full rounded-2xl border overflow-hidden transition-all duration-200"
+        style={{
+          background: "linear-gradient(160deg, rgba(255,255,255,0.033) 0%, rgba(255,255,255,0.013) 100%)",
+          boxShadow: "0 1px 0 rgba(255,255,255,0.06) inset, 0 16px 40px rgba(0,0,0,0.45)",
+          borderColor: "rgba(255,255,255,0.08)",
+        }}
+      >
+        <div className="px-6 py-3.5 border-b border-white/[0.06]">
+          <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/22">next action</p>
+        </div>
+        <div className="px-6 py-6 flex flex-col gap-3">
+          <p className="text-sm text-white/28 leading-relaxed">No execution memory available.</p>
+          <Link
+            href="/daily"
+            className="group flex items-center gap-2 text-xs font-medium text-white/38 hover:text-white/65 transition-colors duration-150 w-fit"
+          >
+            Generate today's state
+            <span className="font-mono transition-transform duration-150 group-hover:translate-x-0.5">→</span>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const state = deriveSystemState(log);
+  const rec = state.recommendation;
+  const firstTask = extractFirstTask(log.plan.blocks);
+  const shutdown = extractShutdown(log.plan.closingLine);
+  const effort = EFFORT_MAP[rec] ?? "Moderate";
+  const copy = NEXT_ACTION_COPY[rec] ?? "";
+
+  return (
+    <div
+      className="noise relative w-full rounded-2xl border overflow-hidden transition-all duration-200 cursor-default"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: "linear-gradient(160deg, rgba(255,255,255,0.033) 0%, rgba(255,255,255,0.013) 100%)",
+        boxShadow: hovered
+          ? "0 1px 0 rgba(255,255,255,0.08) inset, 0 20px 48px rgba(0,0,0,0.5)"
+          : "0 1px 0 rgba(255,255,255,0.06) inset, 0 16px 40px rgba(0,0,0,0.45)",
+        borderColor: hovered ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.08)",
+        transform: hovered ? "translateY(-1px)" : "translateY(0)",
+      }}
+    >
+      <div className="px-6 py-3.5 border-b border-white/[0.06]">
+        <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/22">next action</p>
+      </div>
+
+      <div className="flex flex-col divide-y divide-white/[0.05]">
+
+        {/* Recommendation */}
+        <div className="px-6 py-4 flex flex-col gap-1">
+          <p className="text-[9px] font-medium tracking-[0.14em] uppercase text-white/20">recommendation</p>
+          <p className="text-sm font-medium text-white/72">{rec}</p>
+          <p className="text-[11px] text-white/28 mt-0.5 leading-snug">{copy}</p>
+        </div>
+
+        {/* Start with */}
+        <div className="px-6 py-4 flex flex-col gap-1">
+          <p className="text-[9px] font-medium tracking-[0.14em] uppercase text-white/20">start with</p>
+          <p className="text-sm font-mono text-white/55">→ {firstTask}</p>
+        </div>
+
+        {/* Effort + Shutdown */}
+        <div className="px-6 py-4 grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1">
+            <p className="text-[9px] font-medium tracking-[0.14em] uppercase text-white/20">estimated effort</p>
+            <p className="text-sm font-mono text-white/52">{effort}</p>
+          </div>
+          {shutdown && (
+            <div className="flex flex-col gap-1">
+              <p className="text-[9px] font-medium tracking-[0.14em] uppercase text-white/20">target shutdown</p>
+              <p className="text-sm font-mono text-white/52">{shutdown}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Execute CTA */}
+        <div className="px-6 py-4">
+          <Link
+            href="/daily"
+            className="group flex items-center gap-2 text-xs font-medium text-white/42 hover:text-white/75 transition-colors duration-150 w-fit"
+          >
+            Execute
+            <span className="font-mono transition-transform duration-150 group-hover:translate-x-1">→</span>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // ── sub-components ─────────────────────────────────────────────────────────────
@@ -157,6 +286,11 @@ export default function Home() {
                 <span className="text-white/18 group-hover:text-white/42 text-xs font-mono transition-all duration-150 group-hover:translate-x-0.5">→</span>
               </Link>
             ))}
+          </div>
+
+          {/* Next Action */}
+          <div style={fade(phase, 3, 0.13)}>
+            <NextActionCard log={logs[0] ?? null} />
           </div>
 
           <p className="text-[10px] tracking-[0.16em] uppercase text-white/14" style={{ opacity: phase >= 3 ? 1 : 0, transition: "opacity 0.5s ease 0.25s" }}>
