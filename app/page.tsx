@@ -12,7 +12,7 @@ const systemCards = [
 const modules = [
   { href: "/daily",        label: "01", title: "Daily Execution", desc: "Generate today's plan from inputs." },
   { href: "/architecture", label: "02", title: "Architecture",    desc: "Rules, constraints, and system logic." },
-  { href: "/history",      label: "03", title: "History",         desc: "Execution memory and past plans." },
+  { href: "/logs",         label: "03", title: "Logs",            desc: "Saved execution history and weekly review." },
 ];
 
 export default function Home() {

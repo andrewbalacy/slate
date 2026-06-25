@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ViewTransition } from "react";
 import SystemClock from "@/components/SystemClock";
 import "./globals.css";
 
@@ -30,7 +31,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <SystemClock />
-        {children}
+        <ViewTransition>{children}</ViewTransition>
       </body>
     </html>
   );

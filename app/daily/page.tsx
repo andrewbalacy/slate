@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { generateSlatePlan, type SlatePlan, type CognitiveLoad, type YesNo, type TrainingToday } from "./lib/slateEngine";
+import { generateSlatePlan, type SlatePlan, type CognitiveLoad, type YesNo, type TrainingToday, type SlateInput } from "./lib/slateEngine";
+import { saveLog } from "@/lib/slateStorage";
 
 export default function DailyExecution() {
   const [form, setForm] = useState({
@@ -15,10 +16,12 @@ export default function DailyExecution() {
     trainingToday: "" as TrainingToday | "",
   });
   const [plan, setPlan] = useState<SlatePlan | null>(null);
+  const [lastInput, setLastInput] = useState<SlateInput | null>(null);
+  const [saved, setSaved] = useState(false);
 
   function handleGenerate() {
     if (!form.date || !form.day || !form.energy || !form.cognitiveLoad || !form.workToday) return;
-    const result = generateSlatePlan({
+    const input: SlateInput = {
       date: form.date,
       day: form.day,
       energy: Number(form.energy),
@@ -26,8 +29,17 @@ export default function DailyExecution() {
       workToday: form.workToday as YesNo,
       constraint: form.constraint || undefined,
       trainingToday: (form.trainingToday as TrainingToday) || undefined,
-    });
+    };
+    const result = generateSlatePlan(input);
     setPlan(result);
+    setLastInput(input);
+    setSaved(false);
+  }
+
+  function handleSave() {
+    if (!lastInput || !plan) return;
+    saveLog(lastInput, plan);
+    setSaved(true);
   }
 
   const inputBase =
@@ -174,10 +186,10 @@ export default function DailyExecution() {
           <button
             type="button"
             onClick={handleGenerate}
-            className="mt-3 w-full py-3 bg-white text-black text-sm font-medium tracking-wide rounded-lg hover:bg-white/92 active:bg-white/80 transition-all duration-150"
-            style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.5)" }}
+            className="slate-cmd-btn mt-3 w-full py-3 rounded-xl text-sm font-medium tracking-wide flex items-center justify-center gap-2"
           >
-            Generate Plan
+            <span>Generate Plan</span>
+            <span className="text-white/35 font-mono text-xs transition-transform duration-200 group-hover:translate-x-0.5">→</span>
           </button>
         </div>
 
@@ -221,6 +233,19 @@ export default function DailyExecution() {
                 <p className="text-xs text-white/22 tracking-[0.06em]">{plan.closingLine}</p>
               </div>
             </div>
+
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saved}
+              className="w-full py-3 border border-white/[0.09] rounded-xl text-sm font-medium tracking-wide transition-all duration-150 disabled:cursor-default"
+              style={{
+                color: saved ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.5)",
+                background: saved ? "rgba(255,255,255,0.02)" : "transparent",
+              }}
+            >
+              {saved ? "log saved" : "save today's log"}
+            </button>
           </div>
         )}
 

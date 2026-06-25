@@ -25,6 +25,25 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Page route transitions via View Transitions API */
+::view-transition-old(root) {
+  animation: page-exit 220ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+::view-transition-new(root) {
+  animation: page-enter 260ms cubic-bezier(0, 0, 0.2, 1) both;
+}
+
+@keyframes page-exit {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-4px); }
+}
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -100,6 +119,34 @@ body {
 
 .cmd-edge {
   transition: height 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Slate OS command button */
+.slate-cmd-btn {
+  color: rgba(255,255,255,0.7);
+  background: linear-gradient(160deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 4px 16px rgba(0,0,0,0.3);
+  transition: color 0.18s ease,
+              background 0.18s ease,
+              border-color 0.18s ease,
+              box-shadow 0.18s ease,
+              transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slate-cmd-btn:hover {
+  color: rgba(255,255,255,0.92);
+  background: linear-gradient(160deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+  border-color: rgba(255,255,255,0.18);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset,
+              0 8px 24px rgba(0,0,0,0.4),
+              0 0 16px rgba(255,255,255,0.04);
+  transform: translateY(-1px);
+}
+
+.slate-cmd-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 2px 8px rgba(0,0,0,0.3);
 }
 
 /* Premium input focus ring */
