@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { generateSlatePlan, type SlatePlan, type CognitiveLoad, type YesNo, type TrainingToday, type SlateInput } from "./lib/slateEngine";
 import { saveLog } from "@/lib/slateStorage";
 
@@ -155,6 +155,18 @@ export default function DailyExecution() {
     constraint: "",
     trainingToday: "" as TrainingToday | "",
   });
+  useEffect(() => {
+    const days = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10);
+    const dayStr = days[now.getDay()];
+    setForm(f => ({
+      ...f,
+      date: f.date || dateStr,
+      day: f.day || dayStr,
+    }));
+  }, []);
+
   const [plan, setPlan] = useState<SlatePlan | null>(null);
   const [lastInput, setLastInput] = useState<SlateInput | null>(null);
   const [saved, setSaved] = useState(false);
