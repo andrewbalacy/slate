@@ -110,14 +110,25 @@ export default function DailyExecution() {
         </div>
 
         {plan && (
-          <div className="w-full max-w-md border border-white/10 rounded-xl px-8 py-10 flex flex-col gap-6">
-            <p className="text-base font-semibold tracking-tight text-white">{plan.title}</p>
-            <ul className="flex flex-col gap-3">
-              {plan.blocks.map((block, i) => (
-                <li key={i} className="text-sm text-white/70">{block}</li>
-              ))}
-            </ul>
-            <p className="text-xs text-white/30 border-t border-white/10 pt-4">{plan.closingLine}</p>
+          <div className="w-full max-w-md flex flex-col gap-4 animate-fade-in">
+            <p className="text-xs font-medium tracking-[0.2em] uppercase text-white/25 px-1">
+              generated plan
+            </p>
+            <div className="border border-white/10 rounded-xl overflow-hidden">
+              <div className="px-8 py-8 border-b border-white/10">
+                <p className="text-3xl font-semibold tracking-tight text-white">{plan.title}</p>
+              </div>
+              <ul className="flex flex-col divide-y divide-white/[0.06]">
+                {plan.blocks.map((block, i) => (
+                  <li key={i} className="px-8 py-5 text-sm text-white/60 font-mono tracking-wide">
+                    {block}
+                  </li>
+                ))}
+              </ul>
+              <div className="px-8 py-6 border-t border-white/10">
+                <p className="text-xs text-white/25 tracking-wide">{plan.closingLine}</p>
+              </div>
+            </div>
           </div>
         )}
 
