@@ -3,15 +3,15 @@ import Link from "next/link";
 const systemCards = [
   {
     label: "strict floor",
-    desc: "One 25-min block, every day. Non-negotiable.",
+    desc: "Minimum viable execution.",
   },
   {
     label: "adaptive ceiling",
-    desc: "Output scales with capacity. Never forced.",
+    desc: "Capacity-aware expansion.",
   },
   {
     label: "weekly execution",
-    desc: "Consistency reviewed Sundays. No streak pressure.",
+    desc: "Consistency over intensity.",
   },
 ];
 
@@ -29,30 +29,40 @@ export default function Home() {
         }}
       />
 
-      <div className="relative z-10 flex flex-col items-center text-center gap-16 w-full max-w-lg">
+      <div className="relative z-10 flex flex-col items-center text-center gap-14 w-full max-w-lg">
 
-        {/* Hero */}
-        <div className="flex flex-col items-center gap-5 animate-slide-up">
+        {/* Title */}
+        <div className="flex flex-col items-center gap-4 stagger-1">
           <h1 className="text-5xl sm:text-6xl font-semibold tracking-[-0.03em] text-white/92">
             slate.
           </h1>
-          <p className="text-[10px] font-medium tracking-[0.22em] uppercase text-white/25">
+
+          {/* Status pill */}
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/[0.08] stagger-2"
+            style={{ background: "rgba(255,255,255,0.03)" }}>
+            <span className="w-1 h-1 rounded-full bg-white/30 inline-block" />
+            <span className="text-[9px] font-medium tracking-[0.2em] uppercase text-white/25">
+              system online
+            </span>
+          </div>
+
+          {/* Subtitle */}
+          <p className="text-[10px] font-medium tracking-[0.22em] uppercase text-white/22 stagger-2">
             fatigue-aware execution engine
           </p>
-          <p className="text-[11px] tracking-[0.16em] uppercase text-white/18 mt-1">
+          <p className="text-[11px] tracking-[0.16em] uppercase text-white/15 stagger-2">
             capacity → rules → execution
           </p>
         </div>
 
         {/* System cards */}
         <div
-          className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden animate-slide-up"
+          className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden stagger-3"
           style={{
             background:
               "linear-gradient(160deg, rgba(255,255,255,0.033) 0%, rgba(255,255,255,0.013) 100%)",
             boxShadow:
               "0 1px 0 rgba(255,255,255,0.06) inset, 0 24px 48px rgba(0,0,0,0.45)",
-            animationDelay: "0.07s",
           }}
         >
           {systemCards.map((card, i) => (
@@ -63,7 +73,7 @@ export default function Home() {
               <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/28">
                 {card.label}
               </p>
-              <p className="text-sm text-white/42 leading-snug">
+              <p className="text-sm text-white/38 leading-snug">
                 {card.desc}
               </p>
             </div>
@@ -71,7 +81,7 @@ export default function Home() {
         </div>
 
         {/* CTA buttons */}
-        <div className="flex flex-row gap-3 animate-slide-up" style={{ animationDelay: "0.14s" }}>
+        <div className="flex flex-row gap-3 stagger-4">
           <Link
             href="/daily"
             className="px-6 py-2.5 bg-white text-black text-sm font-medium tracking-wide rounded-lg hover:bg-white/90 active:bg-white/80 transition-colors duration-150"
@@ -88,10 +98,7 @@ export default function Home() {
         </div>
 
         {/* Footer */}
-        <p
-          className="text-[10px] tracking-[0.16em] uppercase text-white/16 animate-slide-up"
-          style={{ animationDelay: "0.2s" }}
-        >
+        <p className="text-[10px] tracking-[0.16em] uppercase text-white/14 stagger-4">
           reduce friction. execute consistently.
         </p>
       </div>

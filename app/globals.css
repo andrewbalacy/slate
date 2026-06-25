@@ -54,6 +54,12 @@ body {
   opacity: 0.035;
 }
 
+/* Staggered entrance animations */
+.stagger-1 { animation: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0s; }
+.stagger-2 { animation: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.1s; }
+.stagger-3 { animation: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.2s; }
+.stagger-4 { animation: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.3s; }
+
 /* Premium input focus ring */
 .slate-input:focus {
   outline: none;
