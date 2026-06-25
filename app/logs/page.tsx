@@ -4,6 +4,99 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getLogs, type SlateLog } from "@/lib/slateStorage";
 
+function EnergyTrend({ logs }: { logs: SlateLog[] }) {
+  const recent = [...logs].reverse().slice(0, 7);
+
+  if (recent.length < 2) {
+    return (
+      <p className="px-6 py-6 text-xs text-white/18 italic">
+        More logs needed to generate a trend.
+      </p>
+    );
+  }
+
+  const W = 320;
+  const H = 80;
+  const PAD_X = 0;
+  const PAD_Y = 6;
+  const plotW = W - PAD_X * 2;
+  const plotH = H - PAD_Y * 2;
+
+  const points = recent.map((l, i) => {
+    const x = PAD_X + (i / (recent.length - 1)) * plotW;
+    const y = PAD_Y + plotH - ((l.input.energy - 1) / 9) * plotH;
+    return { x, y, energy: l.input.energy, date: l.input.date };
+  });
+
+  const polyline = points.map(p => `${p.x},${p.y}`).join(" ");
+  const area = [
+    `M ${points[0].x},${H}`,
+    ...points.map(p => `L ${p.x},${p.y}`),
+    `L ${points[points.length - 1].x},${H}`,
+    "Z",
+  ].join(" ");
+
+  return (
+    <div className="px-6 pb-6 pt-2">
+      {/* Y-axis hints */}
+      <div className="flex justify-between mb-1.5 px-0.5">
+        {[10, 7, 4, 1].map(v => (
+          <span key={v} className="text-[8px] font-mono text-white/14 w-3">{v}</span>
+        ))}
+      </div>
+
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="w-full"
+        style={{ height: 80 }}
+        preserveAspectRatio="none"
+      >
+        {/* Horizontal grid lines */}
+        {[1, 4, 7, 10].map(v => {
+          const y = PAD_Y + plotH - ((v - 1) / 9) * plotH;
+          return (
+            <line key={v} x1={0} y1={y} x2={W} y2={y}
+              stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+          );
+        })}
+
+        {/* Area fill */}
+        <path d={area} fill="rgba(255,255,255,0.03)" />
+
+        {/* Line */}
+        <polyline
+          points={polyline}
+          fill="none"
+          stroke="rgba(255,255,255,0.35)"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
+
+        {/* Data points */}
+        {points.map((p, i) => (
+          <circle key={i} cx={p.x} cy={p.y} r="2.5"
+            fill="#080808" stroke="rgba(255,255,255,0.45)" strokeWidth="1.5" />
+        ))}
+      </svg>
+
+      {/* Date labels */}
+      <div className="flex justify-between mt-2 px-0.5">
+        {points.map((p, i) => {
+          const parts = p.date.split("-");
+          const label = parts.length === 3 ? `${parts[1]}/${parts[2]}` : p.date;
+          return (
+            <span key={i} className="text-[8px] font-mono text-white/18 text-center"
+              style={{ width: `${100 / points.length}%` }}>
+              {label}
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function computeReview(logs: SlateLog[]) {
   if (!logs.length) return null;
 
@@ -93,6 +186,19 @@ export default function Logs() {
             </div>
           </div>
         )}
+
+        {/* Energy Trend */}
+        <div
+          className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden animate-slide-up"
+          style={{ ...panelStyle, animationDelay: "0.08s" }}
+        >
+          <div className="px-6 py-4 border-b border-white/[0.06]">
+            <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/28">
+              energy trend
+            </p>
+          </div>
+          <EnergyTrend logs={logs} />
+        </div>
 
         {/* Log entries */}
         <div className="w-full flex flex-col gap-4 animate-slide-up" style={{ animationDelay: "0.1s" }}>
