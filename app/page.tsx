@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { getLogs, type SlateLog } from "@/lib/slateStorage";
 
 const systemCards = [
   { label: "strict floor",     desc: "Minimum viable execution." },
@@ -15,9 +16,21 @@ const modules = [
   { href: "/logs",         label: "03", title: "Logs",            desc: "Saved execution history and weekly review." },
 ];
 
+function computeInsights(logs: SlateLog[]) {
+  if (!logs.length) return null;
+  const avgEnergy = logs.reduce((s, l) => s + l.input.energy, 0) / logs.length;
+  const workDays = logs.filter(l => l.input.workToday === "yes").length;
+  const trainingDays = logs.filter(l => l.input.trainingToday === "yes").length;
+  const freq: Record<string, number> = {};
+  for (const l of logs) if (l.input.constraint) freq[l.input.constraint] = (freq[l.input.constraint] ?? 0) + 1;
+  const topConstraint = Object.entries(freq).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+  return { total: logs.length, avgEnergy, workDays, trainingDays, topConstraint };
+}
+
 export default function Home() {
   const [phase, setPhase] = useState(0);
   // phase 0: blank → phase 1: title → phase 2: status → phase 3: content
+  const [logs, setLogs] = useState<SlateLog[]>([]);
 
   useEffect(() => {
     const t1 = setTimeout(() => setPhase(1), 80);
@@ -25,6 +38,12 @@ export default function Home() {
     const t3 = setTimeout(() => setPhase(3), 900);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
+
+  useEffect(() => {
+    setLogs(getLogs());
+  }, []);
+
+  const insights = computeInsights(logs);
 
   return (
     <main className="relative min-h-screen bg-[#080808] text-white flex flex-col items-center justify-center px-6 py-16 overflow-hidden">
@@ -107,6 +126,52 @@ export default function Home() {
               <p className="text-sm text-white/38 leading-snug">{card.desc}</p>
             </div>
           ))}
+        </div>
+
+        {/* System Insights */}
+        <div
+          className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden"
+          style={{
+            background: "linear-gradient(160deg, rgba(255,255,255,0.028) 0%, rgba(255,255,255,0.01) 100%)",
+            boxShadow: "0 1px 0 rgba(255,255,255,0.05) inset, 0 24px 48px rgba(0,0,0,0.45)",
+            opacity: phase >= 3 ? 1 : 0,
+            transform: phase >= 3 ? "translateY(0)" : "translateY(10px)",
+            transition: "opacity 0.5s cubic-bezier(0.16,1,0.3,1) 0.13s, transform 0.5s cubic-bezier(0.16,1,0.3,1) 0.13s",
+          }}
+        >
+          <div className="px-6 py-4 border-b border-white/[0.06]">
+            <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/28">
+              system insights
+            </p>
+          </div>
+
+          {!insights ? (
+            <div className="px-6 py-6">
+              <p className="text-xs text-white/18 italic">No execution memory yet.</p>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 divide-x divide-y divide-white/[0.05]">
+                {[
+                  { label: "logged days",   value: String(insights.total) },
+                  { label: "avg energy",    value: insights.avgEnergy.toFixed(1) },
+                  { label: "work days",     value: String(insights.workDays) },
+                  { label: "training days", value: String(insights.trainingDays) },
+                ].map(({ label, value }) => (
+                  <div key={label} className="px-6 py-4 flex flex-col gap-1">
+                    <p className="text-[9px] font-medium tracking-[0.16em] uppercase text-white/20">{label}</p>
+                    <p className="text-xl font-semibold tracking-tight text-white/65 font-mono">{value}</p>
+                  </div>
+                ))}
+              </div>
+              {insights.topConstraint && (
+                <div className="px-6 py-4 border-t border-white/[0.06] flex items-center justify-between">
+                  <p className="text-[9px] font-medium tracking-[0.16em] uppercase text-white/20">top constraint</p>
+                  <p className="text-xs font-mono text-white/40">{insights.topConstraint}</p>
+                </div>
+              )}
+            </>
+          )}
         </div>
 
         {/* OS command modules */}
