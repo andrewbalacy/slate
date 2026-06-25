@@ -85,6 +85,23 @@ body {
 .stagger-3 { animation: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.2s; }
 .stagger-4 { animation: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.3s; }
 
+/* OS command modules */
+.cmd-module {
+  transition: background 0.18s ease;
+}
+
+.cmd-module:hover {
+  background: rgba(255,255,255,0.025);
+}
+
+.cmd-module:active {
+  background: rgba(255,255,255,0.015);
+}
+
+.cmd-edge {
+  transition: height 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* Premium input focus ring */
 .slate-input:focus {
   outline: none;
