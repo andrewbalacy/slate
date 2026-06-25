@@ -6,16 +6,10 @@ import { getLogs, type SlateLog } from "@/lib/slateStorage";
 
 // ── data ─────────────────────────────────────────────────────────────────────
 
-const systemCards = [
-  { label: "strict floor",     desc: "Minimum viable execution." },
-  { label: "adaptive ceiling", desc: "Capacity-aware expansion." },
-  { label: "weekly execution", desc: "Consistency over intensity." },
-];
-
-const modules = [
-  { href: "/daily",        label: "01", title: "Daily Execution", desc: "Generate today's plan from inputs." },
-  { href: "/architecture", label: "02", title: "Architecture",    desc: "Rules, constraints, and system logic." },
-  { href: "/logs",         label: "03", title: "Logs",            desc: "Saved execution history and weekly review." },
+const quickActions = [
+  { href: "/daily",        label: "Daily Execution" },
+  { href: "/logs",         label: "Logs" },
+  { href: "/architecture", label: "Architecture" },
 ];
 
 // ── helpers ───────────────────────────────────────────────────────────────────
@@ -142,28 +136,25 @@ export default function Home() {
             </div>
           </div>
 
-          {/* System rule cards */}
-          <div className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden" style={{ ...panel, ...fade(phase, 3, 0.1) }}>
-            {systemCards.map((card, i) => (
-              <div key={card.label} className={`px-7 py-5 flex flex-col gap-1 ${i < systemCards.length - 1 ? "border-b border-white/[0.06]" : ""}`}>
-                <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/28">{card.label}</p>
-                <p className="text-sm text-white/38 leading-snug">{card.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Command modules */}
-          <div className="w-full border-t border-white/[0.06]" style={fade(phase, 3, 0.16)}>
-            {modules.map((mod) => (
-              <Link key={mod.href} href={mod.href}
-                className="cmd-module group relative flex items-center gap-5 px-1 py-5 border-b border-white/[0.06]">
-                <span className="cmd-edge absolute left-0 top-1/2 -translate-y-1/2 w-px h-0 bg-white/40 transition-all duration-200 group-hover:h-8" />
-                <span className="text-[10px] font-mono text-white/18 group-hover:text-white/35 transition-colors duration-200 w-5 shrink-0 pl-3">{mod.label}</span>
-                <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-                  <p className="text-sm font-medium tracking-tight text-white/60 group-hover:text-white/88 transition-colors duration-200">{mod.title}</p>
-                  <p className="text-xs text-white/22 group-hover:text-white/38 transition-colors duration-200 truncate">{mod.desc}</p>
-                </div>
-                <span className="text-white/18 group-hover:text-white/45 text-xs font-mono transition-all duration-200 group-hover:translate-x-1 shrink-0">→</span>
+          {/* Quick Actions */}
+          <div
+            className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden"
+            style={{ ...panel, ...fade(phase, 3, 0.1) }}
+          >
+            <div className="px-6 py-3 border-b border-white/[0.06]">
+              <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/22">quick actions</p>
+            </div>
+            {quickActions.map((action, i) => (
+              <Link
+                key={action.href}
+                href={action.href}
+                className="cmd-module group relative flex items-center justify-between px-6 py-3.5 border-b border-white/[0.05] last:border-b-0"
+              >
+                <span className="cmd-edge absolute left-0 top-1/2 -translate-y-1/2 w-px h-0 bg-white/35 transition-all duration-150 group-hover:h-6" />
+                <span className="text-sm font-medium text-white/52 group-hover:text-white/85 transition-colors duration-150 pl-1">
+                  {action.label}
+                </span>
+                <span className="text-white/18 group-hover:text-white/42 text-xs font-mono transition-all duration-150 group-hover:translate-x-0.5">→</span>
               </Link>
             ))}
           </div>
