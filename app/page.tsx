@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getLogs, type SlateLog } from "@/lib/slateStorage";
+import { useToast } from "@/components/ToastProvider";
+import FocusMode, { type FocusData } from "@/components/FocusMode";
 
 // ── data ─────────────────────────────────────────────────────────────────────
 
@@ -67,7 +69,7 @@ function computeInsights(logs: SlateLog[]) {
 
 // ── next action card ─────────────────────────────────────────────────────────
 
-function NextActionCard({ log }: { log: SlateLog | null }) {
+function NextActionCard({ log, onFocusMode }: { log: SlateLog | null; onFocusMode: (d: FocusData) => void }) {
   const [hovered, setHovered] = useState(false);
 
   if (!log) {
@@ -147,15 +149,24 @@ function NextActionCard({ log }: { log: SlateLog | null }) {
           )}
         </div>
 
-        {/* Execute CTA */}
-        <div className="px-6 py-4">
+        {/* CTAs */}
+        <div className="px-6 py-4 flex items-center gap-6">
           <Link
             href="/daily"
-            className="group flex items-center gap-2 text-xs font-medium text-white/42 hover:text-white/75 transition-colors duration-150 w-fit"
+            className="group flex items-center gap-2 text-xs font-medium text-white/42 hover:text-white/75 transition-colors duration-150"
           >
             Execute
             <span className="font-mono transition-transform duration-150 group-hover:translate-x-1">→</span>
           </Link>
+          <span className="w-px h-3.5 bg-white/[0.08]" />
+          <button
+            type="button"
+            onClick={() => onFocusMode({ objective: firstTask, recommendation: rec, effort, shutdown })}
+            className="group flex items-center gap-2 text-xs font-medium text-white/28 hover:text-white/60 transition-colors duration-150"
+          >
+            Focus Mode
+            <span className="font-mono transition-transform duration-150 group-hover:translate-x-0.5">→</span>
+          </button>
         </div>
       </div>
     </div>
@@ -212,6 +223,8 @@ function fade(phase: number, threshold: number, delay = 0) {
 export default function Home() {
   const [phase, setPhase] = useState(0);
   const [logs, setLogs] = useState<SlateLog[]>([]);
+  const [focusData, setFocusData] = useState<FocusData | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     const t1 = setTimeout(() => setPhase(1), 80);
@@ -288,7 +301,13 @@ export default function Home() {
             </div>
 
             {/* Next Action */}
-            <NextActionCard log={logs[0] ?? null} />
+            <NextActionCard
+              log={logs[0] ?? null}
+              onFocusMode={(d) => {
+                toast("Entering Focus Mode.");
+                setFocusData(d);
+              }}
+            />
 
           </div>
 
@@ -395,6 +414,16 @@ export default function Home() {
 
         </div>
       </div>
+
+      {focusData && (
+        <FocusMode
+          {...focusData}
+          onExit={() => {
+            toast("Focus Mode ended.");
+            setFocusData(null);
+          }}
+        />
+      )}
     </main>
   );
 }
