@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { generateSlatePlan, type SlatePlan, type CognitiveLoad, type YesNo, type TrainingToday, type SlateInput } from "./lib/slateEngine";
 import { saveLog } from "@/lib/slateStorage";
+import { useToast } from "@/components/ToastProvider";
 
 // ── protocol data ─────────────────────────────────────────────────────────────
 
@@ -371,6 +372,7 @@ export default function DailyExecution() {
     }));
   }, []);
 
+  const { toast } = useToast();
   const [plan, setPlan] = useState<SlatePlan | null>(null);
   const [lastInput, setLastInput] = useState<SlateInput | null>(null);
   const [saved, setSaved] = useState(false);
@@ -390,12 +392,14 @@ export default function DailyExecution() {
     setPlan(result);
     setLastInput(input);
     setSaved(false);
+    toast("Plan generated.");
   }
 
   function handleSave() {
     if (!lastInput || !plan) return;
     saveLog(lastInput, plan);
     setSaved(true);
+    toast("Execution memory updated.");
   }
 
   const dayOptions: { label: string; value: string }[] = [

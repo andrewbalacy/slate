@@ -73,12 +73,8 @@ function NextActionCard({ log }: { log: SlateLog | null }) {
   if (!log) {
     return (
       <div
-        className="noise relative w-full rounded-2xl border overflow-hidden transition-all duration-200"
-        style={{
-          background: "linear-gradient(160deg, rgba(255,255,255,0.033) 0%, rgba(255,255,255,0.013) 100%)",
-          boxShadow: "0 1px 0 rgba(255,255,255,0.06) inset, 0 16px 40px rgba(0,0,0,0.45)",
-          borderColor: "rgba(255,255,255,0.08)",
-        }}
+        className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden"
+        style={panel}
       >
         <div className="px-6 py-3.5 border-b border-white/[0.06]">
           <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/22">next action</p>
@@ -106,16 +102,16 @@ function NextActionCard({ log }: { log: SlateLog | null }) {
 
   return (
     <div
-      className="noise relative w-full rounded-2xl border overflow-hidden transition-all duration-200 cursor-default"
+      className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden transition-all duration-200 cursor-default"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: "linear-gradient(160deg, rgba(255,255,255,0.033) 0%, rgba(255,255,255,0.013) 100%)",
-        boxShadow: hovered
-          ? "0 1px 0 rgba(255,255,255,0.08) inset, 0 20px 48px rgba(0,0,0,0.5)"
-          : "0 1px 0 rgba(255,255,255,0.06) inset, 0 16px 40px rgba(0,0,0,0.45)",
-        borderColor: hovered ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.08)",
-        transform: hovered ? "translateY(-1px)" : "translateY(0)",
+        ...panel,
+        ...(hovered && {
+          boxShadow: "0 1px 0 rgba(255,255,255,0.08) inset, 0 20px 48px rgba(0,0,0,0.5)",
+          borderColor: "rgba(255,255,255,0.14)",
+          transform: "translateY(-1px)",
+        }),
       }}
     >
       <div className="px-6 py-3.5 border-b border-white/[0.06]">
@@ -265,32 +261,35 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Quick Actions */}
-          <div
-            className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden"
-            style={{ ...panel, ...fade(phase, 3, 0.1) }}
-          >
-            <div className="px-6 py-3 border-b border-white/[0.06]">
-              <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/22">quick actions</p>
-            </div>
-            {quickActions.map((action, i) => (
-              <Link
-                key={action.href}
-                href={action.href}
-                className="cmd-module group relative flex items-center justify-between px-6 py-3.5 border-b border-white/[0.05] last:border-b-0"
-              >
-                <span className="cmd-edge absolute left-0 top-1/2 -translate-y-1/2 w-px h-0 bg-white/35 transition-all duration-150 group-hover:h-6" />
-                <span className="text-sm font-medium text-white/52 group-hover:text-white/85 transition-colors duration-150 pl-1">
-                  {action.label}
-                </span>
-                <span className="text-white/18 group-hover:text-white/42 text-xs font-mono transition-all duration-150 group-hover:translate-x-0.5">→</span>
-              </Link>
-            ))}
-          </div>
+          {/* Card stack */}
+          <div className="flex flex-col gap-4 w-full" style={fade(phase, 3, 0.1)}>
 
-          {/* Next Action */}
-          <div style={fade(phase, 3, 0.13)}>
+            {/* Quick Actions */}
+            <div
+              className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden"
+              style={panel}
+            >
+              <div className="px-6 py-3 border-b border-white/[0.06]">
+                <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/22">quick actions</p>
+              </div>
+              {quickActions.map((action) => (
+                <Link
+                  key={action.href}
+                  href={action.href}
+                  className="cmd-module group relative flex items-center justify-between px-6 py-3.5 border-b border-white/[0.05] last:border-b-0"
+                >
+                  <span className="cmd-edge absolute left-0 top-1/2 -translate-y-1/2 w-px h-0 bg-white/35 transition-all duration-150 group-hover:h-6" />
+                  <span className="text-sm font-medium text-white/52 group-hover:text-white/85 transition-colors duration-150 pl-1">
+                    {action.label}
+                  </span>
+                  <span className="text-white/18 group-hover:text-white/42 text-xs font-mono transition-all duration-150 group-hover:translate-x-0.5">→</span>
+                </Link>
+              ))}
+            </div>
+
+            {/* Next Action */}
             <NextActionCard log={logs[0] ?? null} />
+
           </div>
 
           <p className="text-[10px] tracking-[0.16em] uppercase text-white/14" style={{ opacity: phase >= 3 ? 1 : 0, transition: "opacity 0.5s ease 0.25s" }}>
