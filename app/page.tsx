@@ -15,27 +15,7 @@ const modules = [
   { href: "/history",      label: "03", title: "History",         desc: "Execution memory and past plans." },
 ];
 
-function useClock() {
-  const [time, setTime] = useState<Date | null>(null);
-  useEffect(() => {
-    setTime(new Date());
-    const id = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(id);
-  }, []);
-  return time;
-}
-
-function formatTime(d: Date) {
-  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-}
-
-function formatDate(d: Date) {
-  return d.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" });
-}
-
 export default function Home() {
-  const clock = useClock();
-
   const [phase, setPhase] = useState(0);
   // phase 0: blank → phase 1: title → phase 2: status → phase 3: content
 
@@ -59,20 +39,7 @@ export default function Home() {
         }}
       />
 
-      {/* Live clock — top right */}
-      {clock && (
-        <div className="absolute top-7 right-6 flex flex-col items-end gap-0.5 boot-item"
-          style={{ opacity: phase >= 3 ? 1 : 0, transition: "opacity 0.5s ease 0.2s" }}>
-          <span className="text-[11px] font-mono text-white/30 tabular-nums">
-            {formatTime(clock)}
-          </span>
-          <span className="text-[9px] font-mono text-white/18 tracking-wide">
-            {formatDate(clock)}
-          </span>
-        </div>
-      )}
-
-      <div className="relative z-10 flex flex-col items-center text-center gap-14 w-full max-w-lg">
+<div className="relative z-10 flex flex-col items-center text-center gap-14 w-full max-w-lg">
 
         {/* Title — boots first */}
         <div className="flex flex-col items-center gap-4">
