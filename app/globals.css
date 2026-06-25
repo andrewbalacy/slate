@@ -54,6 +54,31 @@ body {
   opacity: 0.035;
 }
 
+/* System status dot */
+@keyframes statusPulse {
+  0%, 100% {
+    background-color: #34d399;
+    box-shadow: 0 0 0px 0px rgba(52, 211, 153, 0);
+    opacity: 0.6;
+  }
+  50% {
+    background-color: #6ee7b7;
+    box-shadow: 0 0 6px 2px rgba(52, 211, 153, 0.35);
+    opacity: 1;
+  }
+}
+
+.status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: #34d399;
+  opacity: 0.6;
+  flex-shrink: 0;
+  animation: statusPulse 3.5s ease-in-out infinite;
+}
+
 /* Staggered entrance animations */
 .stagger-1 { animation: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0s; }
 .stagger-2 { animation: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.1s; }

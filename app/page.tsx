@@ -40,7 +40,7 @@ export default function Home() {
           {/* Status pill */}
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/[0.08] stagger-2"
             style={{ background: "rgba(255,255,255,0.03)" }}>
-            <span className="w-1 h-1 rounded-full bg-white/30 inline-block" />
+            <span className="status-dot" />
             <span className="text-[9px] font-medium tracking-[0.2em] uppercase text-white/25">
               system online
             </span>
@@ -80,20 +80,51 @@ export default function Home() {
           ))}
         </div>
 
-        {/* CTA buttons */}
-        <div className="flex flex-row gap-3 stagger-4">
+        {/* Mode cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full stagger-4">
           <Link
             href="/daily"
-            className="px-6 py-2.5 bg-white text-black text-sm font-medium tracking-wide rounded-lg hover:bg-white/90 active:bg-white/80 transition-colors duration-150"
-            style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.5)" }}
+            className="mode-card group flex flex-col gap-3 px-5 py-5 rounded-xl border border-white/[0.08] text-left"
+            style={{
+              background: "linear-gradient(160deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)",
+            }}
           >
-            Daily Execution
+            <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/30 group-hover:text-white/45 transition-colors duration-200">
+              daily execution
+            </p>
+            <p className="text-xs text-white/28 leading-relaxed group-hover:text-white/42 transition-colors duration-200">
+              Generate today's plan from inputs.
+            </p>
           </Link>
+
           <Link
             href="/architecture"
-            className="px-6 py-2.5 text-white/50 text-sm font-medium tracking-wide rounded-lg border border-white/[0.09] hover:border-white/20 hover:text-white/70 transition-colors duration-150"
+            className="mode-card group flex flex-col gap-3 px-5 py-5 rounded-xl border border-white/[0.08] text-left"
+            style={{
+              background: "linear-gradient(160deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.012) 100%)",
+            }}
           >
-            Architecture
+            <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/30 group-hover:text-white/45 transition-colors duration-200">
+              architecture
+            </p>
+            <p className="text-xs text-white/28 leading-relaxed group-hover:text-white/42 transition-colors duration-200">
+              Rules, constraints, and system logic.
+            </p>
+          </Link>
+
+          <Link
+            href="/history"
+            className="mode-card group flex flex-col gap-3 px-5 py-5 rounded-xl border border-white/[0.08] text-left"
+            style={{
+              background: "linear-gradient(160deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.012) 100%)",
+            }}
+          >
+            <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/30 group-hover:text-white/45 transition-colors duration-200">
+              history
+            </p>
+            <p className="text-xs text-white/28 leading-relaxed group-hover:text-white/42 transition-colors duration-200">
+              Execution memory and past plans.
+            </p>
           </Link>
         </div>
 
