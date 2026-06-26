@@ -1,11 +1,8 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
-
-// ── types ─────────────────────────────────────────────────────────────────────
+import { createContext, memo, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 type ToastEntry = { id: string; message: string };
-
 type ToastContextValue = { toast: (message: string) => void };
 
 const ToastContext = createContext<ToastContextValue>({ toast: () => {} });
@@ -14,9 +11,8 @@ export function useToast() {
   return useContext(ToastContext);
 }
 
-// ── single toast ──────────────────────────────────────────────────────────────
-
-function ToastItem({ message, onDone }: { message: string; onDone: () => void }) {
+// Memoized so existing toasts don't rerender when a new one is added
+const ToastItem = memo(function ToastItem({ message, onDone }: { message: string; onDone: () => void }) {
   const [visible, setVisible] = useState(true);
   const onDoneRef = useRef(onDone);
   onDoneRef.current = onDone;
@@ -33,10 +29,10 @@ function ToastItem({ message, onDone }: { message: string; onDone: () => void })
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(6px)",
         transition: "opacity 0.35s cubic-bezier(0.16,1,0.3,1), transform 0.35s cubic-bezier(0.16,1,0.3,1)",
-        background: "linear-gradient(160deg, rgba(22,22,22,0.96) 0%, rgba(12,12,12,0.96) 100%)",
+        // backdrop-filter removed: bg is 96% opaque so blur is invisible and costs GPU compositing
+        background: "linear-gradient(160deg, rgba(22,22,22,0.97) 0%, rgba(10,10,10,0.97) 100%)",
         border: "1px solid rgba(255,255,255,0.09)",
         boxShadow: "0 1px 0 rgba(255,255,255,0.06) inset, 0 8px 24px rgba(0,0,0,0.6)",
-        backdropFilter: "blur(12px)",
         borderRadius: "12px",
         padding: "10px 16px",
         minWidth: "200px",
@@ -47,9 +43,7 @@ function ToastItem({ message, onDone }: { message: string; onDone: () => void })
       <p className="text-xs font-medium text-white/60 tracking-wide">{message}</p>
     </div>
   );
-}
-
-// ── provider ──────────────────────────────────────────────────────────────────
+});
 
 export default function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<ToastEntry[]>([]);
@@ -59,15 +53,13 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
     setToasts(prev => [...prev, { id, message }]);
   }, []);
 
-  function remove(id: string) {
+  const remove = useCallback((id: string) => {
     setToasts(prev => prev.filter(t => t.id !== id));
-  }
+  }, []);
 
   return (
     <ToastContext.Provider value={{ toast }}>
       {children}
-
-      {/* Toast container */}
       <div
         className="fixed bottom-6 right-6 z-[200] flex flex-col-reverse gap-2 items-end pointer-events-none"
         aria-live="polite"

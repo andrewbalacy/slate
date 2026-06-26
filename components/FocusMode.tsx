@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 
 export type FocusData = {
   objective: string;
@@ -9,6 +9,7 @@ export type FocusData = {
   shutdown: string | null;
 };
 
+// Isolated so only the clock text rerenders each second, not the whole overlay
 function useElapsed() {
   const start = useRef(Date.now());
   const [elapsed, setElapsed] = useState(0);
@@ -27,34 +28,46 @@ function useElapsed() {
   return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
 }
 
+const TimerDisplay = memo(function TimerDisplay() {
+  const elapsed = useElapsed();
+  return (
+    <p
+      className="font-mono font-light text-white/28 tabular-nums"
+      style={{ fontSize: "2.75rem", letterSpacing: "0.08em", lineHeight: 1 }}
+    >
+      {elapsed}
+    </p>
+  );
+});
+
 type Props = FocusData & { onExit: () => void };
 
-export default function FocusMode({ objective, recommendation, effort, shutdown, onExit }: Props) {
+const FocusMode = memo(function FocusMode({ objective, recommendation, effort, shutdown, onExit }: Props) {
   const [visible, setVisible] = useState(false);
-  const elapsed = useElapsed();
+  const onExitRef = useRef(onExit);
+  onExitRef.current = onExit;
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 16);
     return () => clearTimeout(t);
   }, []);
 
-  function handleExit() {
-    setVisible(false);
-    setTimeout(onExit, 380);
-  }
-
-  // Disable scroll on body while open
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = prev; };
   }, []);
 
-  const meta = [
+  function handleExit() {
+    setVisible(false);
+    setTimeout(() => onExitRef.current(), 380);
+  }
+
+  const meta = useMemo(() => [
     { label: "recommendation", value: recommendation },
     { label: "effort", value: effort },
     ...(shutdown ? [{ label: "shutdown", value: shutdown }] : []),
-  ];
+  ], [recommendation, effort, shutdown]);
 
   return (
     <div
@@ -64,17 +77,14 @@ export default function FocusMode({ objective, recommendation, effort, shutdown,
         transition: "opacity 0.4s cubic-bezier(0.16,1,0.3,1)",
       }}
     >
-      {/* Ambient glow */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
-          background:
-            "radial-gradient(ellipse 55% 35% at 50% 15%, rgba(255,255,255,0.022) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse 55% 35% at 50% 15%, rgba(255,255,255,0.022) 0%, transparent 70%)",
         }}
       />
 
-      {/* Content */}
       <div
         className="relative z-10 flex flex-col items-center gap-14 px-6 max-w-md w-full text-center"
         style={{
@@ -83,30 +93,19 @@ export default function FocusMode({ objective, recommendation, effort, shutdown,
           transition: "opacity 0.5s cubic-bezier(0.16,1,0.3,1) 0.08s, transform 0.5s cubic-bezier(0.16,1,0.3,1) 0.08s",
         }}
       >
-        {/* Session timer */}
+        {/* Session timer — only this subtree rerenders each second */}
         <div className="flex flex-col items-center gap-2">
-          <p className="text-[9px] font-medium tracking-[0.22em] uppercase text-white/16">
-            focus mode
-          </p>
-          <p
-            className="font-mono font-light text-white/28 tabular-nums"
-            style={{ fontSize: "2.75rem", letterSpacing: "0.08em", lineHeight: 1 }}
-          >
-            {elapsed}
-          </p>
+          <p className="text-[9px] font-medium tracking-[0.22em] uppercase text-white/16">focus mode</p>
+          <TimerDisplay />
         </div>
 
-        {/* Objective */}
         <div className="flex flex-col items-center gap-2.5">
-          <p className="text-[9px] font-medium tracking-[0.2em] uppercase text-white/20">
-            current objective
-          </p>
+          <p className="text-[9px] font-medium tracking-[0.2em] uppercase text-white/20">current objective</p>
           <p className="text-2xl sm:text-[1.75rem] font-semibold tracking-tight text-white/82 leading-snug">
             {objective}
           </p>
         </div>
 
-        {/* Metadata row */}
         <div className="flex items-center gap-0 flex-wrap justify-center divide-x divide-white/[0.07]">
           {meta.map(({ label, value }) => (
             <div key={label} className="flex flex-col items-center gap-1 px-6">
@@ -116,7 +115,6 @@ export default function FocusMode({ objective, recommendation, effort, shutdown,
           ))}
         </div>
 
-        {/* Exit */}
         <button
           type="button"
           onClick={handleExit}
@@ -128,4 +126,6 @@ export default function FocusMode({ objective, recommendation, effort, shutdown,
       </div>
     </div>
   );
-}
+});
+
+export default FocusMode;

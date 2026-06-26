@@ -1,20 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function SystemClock() {
-  const [time, setTime] = useState<Date | null>(null);
+  const [timeStr, setTimeStr] = useState("");
+  const [dateStr, setDateStr] = useState("");
 
   useEffect(() => {
-    setTime(new Date());
-    const id = setInterval(() => setTime(new Date()), 1000);
+    function tick() {
+      const now = new Date();
+      setTimeStr(now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+      setDateStr(now.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" }));
+    }
+    tick();
+    const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, []);
 
-  if (!time) return null;
-
-  const timeStr = time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-  const dateStr = time.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" });
+  if (!timeStr) return null;
 
   return (
     <div className="fixed top-7 right-6 z-50 flex flex-col items-end gap-0.5 pointer-events-none">

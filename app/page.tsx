@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { getLogs, type SlateLog } from "@/lib/slateStorage";
 import { useToast } from "@/components/ToastProvider";
 import FocusMode, { type FocusData } from "@/components/FocusMode";
@@ -69,7 +69,7 @@ function computeInsights(logs: SlateLog[]) {
 
 // ── next action card ─────────────────────────────────────────────────────────
 
-function NextActionCard({ log, onFocusMode }: { log: SlateLog | null; onFocusMode: (d: FocusData) => void }) {
+const NextActionCard = memo(function NextActionCard({ log, onFocusMode }: { log: SlateLog | null; onFocusMode: (d: FocusData) => void }) {
   const [hovered, setHovered] = useState(false);
 
   if (!log) {
@@ -171,11 +171,11 @@ function NextActionCard({ log, onFocusMode }: { log: SlateLog | null; onFocusMod
       </div>
     </div>
   );
-}
+});
 
 // ── sub-components ─────────────────────────────────────────────────────────────
 
-function MiniEnergyChart({ logs }: { logs: SlateLog[] }) {
+const MiniEnergyChart = memo(function MiniEnergyChart({ logs }: { logs: SlateLog[] }) {
   const pts = [...logs].reverse().slice(0, 7);
   if (pts.length < 2) return (
     <p className="px-5 py-4 text-[10px] text-white/18 italic">Not enough data.</p>
@@ -201,13 +201,13 @@ function MiniEnergyChart({ logs }: { logs: SlateLog[] }) {
       </div>
     </div>
   );
-}
+});
 
 // ── panel style ───────────────────────────────────────────────────────────────
 
 const panel = {
   background: "linear-gradient(160deg, rgba(255,255,255,0.033) 0%, rgba(255,255,255,0.013) 100%)",
-  boxShadow: "0 1px 0 rgba(255,255,255,0.06) inset, 0 16px 40px rgba(0,0,0,0.45)",
+  boxShadow: "0 1px 0 rgba(255,255,255,0.06) inset, 0 8px 24px rgba(0,0,0,0.4)",
 };
 
 function fade(phase: number, threshold: number, delay = 0) {
@@ -235,9 +235,14 @@ export default function Home() {
 
   useEffect(() => { setLogs(getLogs()); }, []);
 
-  const insights = computeInsights(logs);
-  const systemState = logs[0] ? deriveSystemState(logs[0]) : null;
-  const recent = logs.slice(0, 3);
+  const insights = useMemo(() => computeInsights(logs), [logs]);
+  const systemState = useMemo(() => logs[0] ? deriveSystemState(logs[0]) : null, [logs]);
+  const recent = useMemo(() => logs.slice(0, 3), [logs]);
+
+  const handleFocusMode = useCallback((d: FocusData) => {
+    toast("Entering Focus Mode.");
+    setFocusData(d);
+  }, [toast]);
 
   return (
     <main className="relative min-h-screen bg-[#080808] text-white px-6 lg:px-10 py-14 overflow-hidden">
@@ -301,13 +306,7 @@ export default function Home() {
             </div>
 
             {/* Next Action */}
-            <NextActionCard
-              log={logs[0] ?? null}
-              onFocusMode={(d) => {
-                toast("Entering Focus Mode.");
-                setFocusData(d);
-              }}
-            />
+            <NextActionCard log={logs[0] ?? null} onFocusMode={handleFocusMode} />
 
           </div>
 
