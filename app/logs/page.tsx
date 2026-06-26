@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import { getLogs } from "@/lib/slateStorage";
 import type { SlateLog } from "@/types/logs";
 import { computeRecommendationInsights } from "@/lib/recommendations";
+import { computeHealthScore } from "@/lib/insights";
+import { computeRecoveryTrend } from "@/lib/recoveryTrends";
+import { detectPatterns } from "@/lib/patterns";
 
 function EnergyTrend({ logs }: { logs: SlateLog[] }) {
   const recent = [...logs].reverse().slice(0, 7);
@@ -40,20 +43,17 @@ function EnergyTrend({ logs }: { logs: SlateLog[] }) {
 
   return (
     <div className="px-6 pb-6 pt-2">
-      {/* Y-axis hints */}
       <div className="flex justify-between mb-1.5 px-0.5">
         {[10, 7, 4, 1].map(v => (
           <span key={v} className="text-[8px] font-mono text-white/14 w-3">{v}</span>
         ))}
       </div>
-
       <svg
         viewBox={`0 0 ${W} ${H}`}
         className="w-full"
         style={{ height: 80 }}
         preserveAspectRatio="none"
       >
-        {/* Horizontal grid lines */}
         {[1, 4, 7, 10].map(v => {
           const y = PAD_Y + plotH - ((v - 1) / 9) * plotH;
           return (
@@ -61,11 +61,7 @@ function EnergyTrend({ logs }: { logs: SlateLog[] }) {
               stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
           );
         })}
-
-        {/* Area fill */}
         <path d={area} fill="rgba(255,255,255,0.03)" />
-
-        {/* Line */}
         <polyline
           points={polyline}
           fill="none"
@@ -74,15 +70,11 @@ function EnergyTrend({ logs }: { logs: SlateLog[] }) {
           strokeLinejoin="round"
           strokeLinecap="round"
         />
-
-        {/* Data points */}
         {points.map((p, i) => (
           <circle key={i} cx={p.x} cy={p.y} r="2.5"
             fill="#080808" stroke="rgba(255,255,255,0.45)" strokeWidth="1.5" />
         ))}
       </svg>
-
-      {/* Date labels */}
       <div className="flex justify-between mt-2 px-0.5">
         {points.map((p, i) => {
           const parts = p.date.split("-");
@@ -114,6 +106,12 @@ function computeReview(logs: SlateLog[]) {
   return { avgEnergy, workDays, trainingDays, topConstraint };
 }
 
+const collecting = (
+  <div className="px-6 py-5">
+    <p className="text-[10px] font-mono text-white/18 italic">Collecting execution memory...</p>
+  </div>
+);
+
 export default function Logs() {
   const [logs, setLogs] = useState<SlateLog[]>([]);
 
@@ -122,7 +120,10 @@ export default function Logs() {
   }, []);
 
   const review = computeReview(logs);
+  const healthScore = computeHealthScore(logs);
+  const recoveryTrend = computeRecoveryTrend(logs);
   const recInsights = computeRecommendationInsights(logs);
+  const patterns = detectPatterns(logs);
 
   const panelStyle = {
     background: "linear-gradient(160deg, rgba(255,255,255,0.033) 0%, rgba(255,255,255,0.013) 100%)",
@@ -150,16 +151,17 @@ export default function Logs() {
 
       <div className="relative z-10 flex-1 flex flex-col items-center gap-12 py-12 max-w-md mx-auto w-full">
 
+        {/* Header */}
         <div className="flex flex-col items-center text-center gap-3 animate-slide-up w-full">
           <h1 className="text-3xl sm:text-[2.25rem] font-semibold tracking-[-0.02em] text-white/90">
             logs
           </h1>
           <p className="text-[10px] font-medium tracking-[0.22em] uppercase text-white/22">
-            execution memory
+            intelligence + memory
           </p>
         </div>
 
-        {/* Weekly review panel */}
+        {/* 1 — Weekly Review */}
         {review && (
           <div
             className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden animate-slide-up"
@@ -172,10 +174,10 @@ export default function Logs() {
             </div>
             <div className="grid grid-cols-2 divide-x divide-y divide-white/[0.05]">
               {[
-                { label: "logged days",       value: String(logs.length) },
-                { label: "avg energy",        value: review.avgEnergy.toFixed(1) },
-                { label: "work days",         value: String(review.workDays) },
-                { label: "training days",     value: String(review.trainingDays) },
+                { label: "logged days",   value: String(logs.length) },
+                { label: "avg energy",    value: review.avgEnergy.toFixed(1) },
+                { label: "work days",     value: String(review.workDays) },
+                { label: "training days", value: String(review.trainingDays) },
               ].map(({ label, value }) => (
                 <div key={label} className="px-6 py-4 flex flex-col gap-1">
                   <p className="text-[9px] font-medium tracking-[0.16em] uppercase text-white/22">{label}</p>
@@ -187,71 +189,166 @@ export default function Logs() {
               <p className="text-[9px] font-medium tracking-[0.16em] uppercase text-white/22">top constraint</p>
               <p className="text-xs font-mono text-white/45">{review.topConstraint}</p>
             </div>
+            <div className="border-t border-white/[0.06]">
+              <div className="px-6 py-3 border-b border-white/[0.04]">
+                <p className="text-[9px] font-medium tracking-[0.16em] uppercase text-white/22">energy trend</p>
+              </div>
+              <EnergyTrend logs={logs} />
+            </div>
           </div>
         )}
 
-        {/* Energy Trend */}
-        <div
-          className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden animate-slide-up"
-          style={{ ...panelStyle, animationDelay: "0.08s" }}
-        >
-          <div className="px-6 py-4 border-b border-white/[0.06]">
-            <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/28">
-              energy trend
-            </p>
+        {/* 2 — Intelligence */}
+        <div className="w-full flex flex-col gap-6 animate-slide-up" style={{ animationDelay: "0.07s" }}>
+          <p className="text-[10px] font-medium tracking-[0.22em] uppercase text-white/22">
+            intelligence
+          </p>
+
+          {/* Execution Health */}
+          <div
+            className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden"
+            style={panelStyle}
+          >
+            <div className="px-6 py-4 border-b border-white/[0.06]">
+              <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/28">
+                execution health
+              </p>
+            </div>
+            {healthScore ? (
+              <>
+                <div className="px-6 py-5 flex items-center justify-between border-b border-white/[0.06]">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-[9px] font-medium tracking-[0.16em] uppercase text-white/22">score</p>
+                    <p className="text-2xl font-semibold font-mono text-white/75">{healthScore.score}</p>
+                  </div>
+                  <p className="text-sm font-mono text-white/45">{healthScore.label}</p>
+                </div>
+                <div className="px-6 py-4 border-b border-white/[0.06]">
+                  <p className="text-xs text-white/35 leading-relaxed">{healthScore.explanation}</p>
+                </div>
+                <div className="px-6 py-4 flex flex-col gap-2">
+                  {healthScore.factors.map((f, i) => (
+                    <p key={i} className="text-[9px] font-mono text-white/25">· {f}</p>
+                  ))}
+                </div>
+              </>
+            ) : collecting}
           </div>
-          <EnergyTrend logs={logs} />
-        </div>
 
-        {/* Recommendation Insights */}
-        <div
-          className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden animate-slide-up"
-          style={{ ...panelStyle, animationDelay: "0.09s" }}
-        >
-          <div className="px-6 py-4 border-b border-white/[0.06]">
-            <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/28">
-              recommendation insights
-            </p>
+          {/* Recovery Trend */}
+          <div
+            className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden"
+            style={panelStyle}
+          >
+            <div className="px-6 py-4 border-b border-white/[0.06]">
+              <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/28">
+                recovery trend
+              </p>
+            </div>
+            {recoveryTrend ? (
+              <>
+                <div className="px-6 py-5 flex items-center justify-between border-b border-white/[0.06]">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-[9px] font-medium tracking-[0.16em] uppercase text-white/22">direction</p>
+                    <p className="text-sm font-mono text-white/55">{recoveryTrend.direction}</p>
+                  </div>
+                  <p className="text-[9px] font-medium tracking-[0.14em] uppercase text-white/35">
+                    {recoveryTrend.level} risk
+                  </p>
+                </div>
+                <div className="px-6 py-4 border-b border-white/[0.06]">
+                  <p className="text-xs text-white/35 leading-relaxed">{recoveryTrend.explanation}</p>
+                </div>
+                <div className="px-6 py-4 flex flex-col gap-2">
+                  {recoveryTrend.factors.map((f, i) => (
+                    <p key={i} className="text-[9px] font-mono text-white/25">· {f}</p>
+                  ))}
+                </div>
+              </>
+            ) : collecting}
           </div>
 
-          {recInsights ? (
-            <>
-              <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
-                <p className="text-[9px] font-medium tracking-[0.16em] uppercase text-white/22">dominant mode</p>
-                <p className="text-sm font-mono text-white/55">{recInsights.mostCommon}</p>
-              </div>
+          {/* Recommendation Insights */}
+          <div
+            className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden"
+            style={panelStyle}
+          >
+            <div className="px-6 py-4 border-b border-white/[0.06]">
+              <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/28">
+                recommendation insights
+              </p>
+            </div>
+            {recInsights ? (
+              <>
+                <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
+                  <p className="text-[9px] font-medium tracking-[0.16em] uppercase text-white/22">dominant mode</p>
+                  <p className="text-sm font-mono text-white/55">{recInsights.mostCommon}</p>
+                </div>
+                <div className="flex flex-col divide-y divide-white/[0.05]">
+                  {recInsights.distribution.map(({ mode, count, pct }) => (
+                    <div key={mode} className="px-6 py-3 flex items-center justify-between">
+                      <p className={`text-[9px] font-medium tracking-[0.12em] uppercase ${count > 0 ? "text-white/30" : "text-white/14"}`}>
+                        {mode}
+                      </p>
+                      <div className="flex items-baseline gap-2.5">
+                        <span className={`text-sm font-mono ${count > 0 ? "text-white/55" : "text-white/18"}`}>{count}</span>
+                        <span className="text-[9px] font-mono text-white/22 w-7 text-right">{pct}%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="px-6 py-4 border-t border-white/[0.06] flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[9px] font-medium tracking-[0.16em] uppercase text-white/22">distribution</p>
+                    <p className="text-[9px] font-mono text-white/38">{recInsights.stability}</p>
+                  </div>
+                  <p className="text-[9px] text-white/22 leading-relaxed">{recInsights.stabilityExplanation}</p>
+                </div>
+              </>
+            ) : collecting}
+          </div>
 
+          {/* Patterns Detected */}
+          <div
+            className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden"
+            style={panelStyle}
+          >
+            <div className="px-6 py-4 border-b border-white/[0.06]">
+              <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/28">
+                patterns detected
+              </p>
+            </div>
+            {patterns.length > 0 ? (
               <div className="flex flex-col divide-y divide-white/[0.05]">
-                {recInsights.distribution.map(({ mode, count, pct }) => (
-                  <div key={mode} className="px-6 py-3 flex items-center justify-between">
-                    <p className={`text-[9px] font-medium tracking-[0.12em] uppercase ${count > 0 ? "text-white/30" : "text-white/14"}`}>
-                      {mode}
-                    </p>
-                    <div className="flex items-baseline gap-2.5">
-                      <span className={`text-sm font-mono ${count > 0 ? "text-white/55" : "text-white/18"}`}>{count}</span>
-                      <span className="text-[9px] font-mono text-white/22 w-7 text-right">{pct}%</span>
+                {patterns.map((pattern, i) => (
+                  <div key={i} className="px-6 py-5 flex flex-col gap-3">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-[9px] font-medium tracking-[0.16em] uppercase text-white/28">
+                        {pattern.title}
+                      </p>
+                      <p className="text-xs text-white/35 leading-relaxed">{pattern.explanation}</p>
+                    </div>
+                    <div className="flex flex-wrap gap-4">
+                      {pattern.values.map(({ label, value }) => (
+                        <div key={label} className="flex flex-col gap-0.5">
+                          <p className="text-[8px] font-medium tracking-[0.14em] uppercase text-white/22">{label}</p>
+                          <p className="text-sm font-mono text-white/50">{value}</p>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ))}
               </div>
-
-              <div className="px-6 py-4 border-t border-white/[0.06] flex flex-col gap-1.5">
-                <div className="flex items-center justify-between">
-                  <p className="text-[9px] font-medium tracking-[0.16em] uppercase text-white/22">distribution</p>
-                  <p className="text-[9px] font-mono text-white/38">{recInsights.stability}</p>
-                </div>
-                <p className="text-[9px] text-white/22 leading-relaxed">{recInsights.stabilityExplanation}</p>
-              </div>
-            </>
-          ) : (
-            <div className="px-6 py-5">
-              <p className="text-[10px] font-mono text-white/18 italic">Collecting execution memory...</p>
-            </div>
-          )}
+            ) : collecting}
+          </div>
         </div>
 
-        {/* Log entries */}
+        {/* 3 — Execution Memory */}
         <div className="w-full flex flex-col gap-4 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+          <p className="text-[10px] font-medium tracking-[0.22em] uppercase text-white/22">
+            execution memory
+          </p>
+
           {logs.length === 0 && (
             <div
               className="w-full rounded-2xl border border-white/[0.08] px-8 py-10 flex items-center justify-center"
@@ -272,7 +369,6 @@ export default function Logs() {
                 className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden"
                 style={panelStyle}
               >
-                {/* Header */}
                 <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
                   <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/28">
                     {log.input.date} · {log.input.day}
@@ -280,13 +376,12 @@ export default function Logs() {
                   <p className="text-[9px] font-mono text-white/18">{ts}</p>
                 </div>
 
-                {/* Input summary */}
                 <div className="px-6 py-4 flex flex-col gap-2 border-b border-white/[0.06]">
                   {[
-                    { label: "energy",        value: String(log.input.energy) },
-                    { label: "cognitive load", value: log.input.cognitiveLoad },
-                    { label: "work today",    value: log.input.workToday },
-                    { label: "training",      value: log.input.trainingToday ?? "auto" },
+                    { label: "energy",         value: String(log.input.energy) },
+                    { label: "cognitive load",  value: log.input.cognitiveLoad },
+                    { label: "work today",      value: log.input.workToday },
+                    { label: "training",        value: log.input.trainingToday ?? "auto" },
                     ...(log.input.constraint ? [{ label: "constraint", value: log.input.constraint }] : []),
                   ].map(({ label, value }) => (
                     <div key={label} className="flex items-center justify-between">
@@ -296,7 +391,6 @@ export default function Logs() {
                   ))}
                 </div>
 
-                {/* Plan summary */}
                 <div className="px-6 py-4">
                   <p className="text-[9px] font-medium tracking-[0.16em] uppercase text-white/20 mb-3">
                     generated plan
