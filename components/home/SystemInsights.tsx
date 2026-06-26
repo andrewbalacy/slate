@@ -1,5 +1,6 @@
 import { panel } from "./helpers";
 import type { HealthScore } from "@/lib/insights";
+import type { RecoveryTrend } from "@/lib/recoveryTrends";
 
 type InsightsData = {
   total: number;
@@ -12,9 +13,11 @@ type InsightsData = {
 export default function SystemInsights({
   insights,
   healthScore,
+  recoveryTrend,
 }: {
   insights: InsightsData;
   healthScore: HealthScore | null;
+  recoveryTrend: RecoveryTrend | null;
 }) {
   return (
     <div className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden" style={panel}>
@@ -77,6 +80,34 @@ export default function SystemInsights({
             ) : (
               <div className="px-5 py-5">
                 <p className="text-[10px] font-mono text-white/18">3+ sessions required</p>
+              </div>
+            )}
+          </div>
+          <div className="border-t border-white/[0.08]">
+            <div className="px-5 py-3 border-b border-white/[0.05]">
+              <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/28">recovery risk trend</p>
+            </div>
+
+            {recoveryTrend ? (
+              <div className="px-5 pt-4 pb-4 flex flex-col gap-3">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-sm font-medium tracking-tight text-white/60">
+                    {recoveryTrend.direction}
+                  </span>
+                  <span className="text-[9px] font-medium tracking-[0.14em] uppercase text-white/30">
+                    {recoveryTrend.level} risk
+                  </span>
+                </div>
+                <p className="text-[9px] text-white/28 leading-relaxed">{recoveryTrend.explanation}</p>
+                <div className="flex flex-col gap-1 border-t border-white/[0.05] pt-2.5">
+                  {recoveryTrend.factors.map((f) => (
+                    <p key={f} className="text-[9px] font-mono text-white/22 leading-relaxed">· {f}</p>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="px-5 py-4">
+                <p className="text-[10px] font-mono text-white/18">5+ sessions required</p>
               </div>
             )}
           </div>
