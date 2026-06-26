@@ -52,7 +52,7 @@ export default function CursorAura() {
     <div
       aria-hidden
       className="pointer-events-none fixed z-[1] top-0 left-0"
-      style={{ opacity: 0 }}
+      style={{ opacity: 0, willChange: "transform" }}
       ref={elRef}
     >
       <div

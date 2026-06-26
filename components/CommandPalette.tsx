@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const commands = [
@@ -17,10 +17,13 @@ export default function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  const filtered = commands.filter(
-    (c) =>
-      c.label.toLowerCase().includes(query.toLowerCase()) ||
-      c.desc.toLowerCase().includes(query.toLowerCase())
+  const filtered = useMemo(
+    () => commands.filter(
+      (c) =>
+        c.label.toLowerCase().includes(query.toLowerCase()) ||
+        c.desc.toLowerCase().includes(query.toLowerCase())
+    ),
+    [query]
   );
 
   useEffect(() => {
