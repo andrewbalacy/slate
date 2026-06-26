@@ -179,27 +179,19 @@ Slate v0.7 — Completion Tracking
 
 ## Roadmap
 
-### v0.5 — Intelligence
-
-* Pattern detection
-* Recovery risk trends
-* Workday fatigue patterns
-* Recommendation accuracy
-* Execution health score
-
-### v0.6 — Completion Tracking
+### v0.7 — Completion Tracking
 
 * Planned vs executed comparison
 * Completion status tracking
 * Adherence metrics
 
-### v0.7 — Cloud Sync
+### v0.8 — Cloud Sync
 
 * User accounts
 * Cross-device memory
 * Execution log backups
 
-### v0.8 — Domain Modules
+### v0.9 — Domain Modules
 
 * School
 * Training
@@ -207,7 +199,7 @@ Slate v0.7 — Completion Tracking
 * Career
 * Recovery
 
-### v0.9 — Agent Layer
+### v1.0 — Agent Layer
 
 * Execution Agent
 * School Agent
