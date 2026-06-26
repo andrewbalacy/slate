@@ -1,8 +1,17 @@
 # slate.
 
-A fatigue-aware execution operating system built with Next.js, React, TypeScript, and Tailwind CSS.
+**Adaptive Execution Intelligence Platform**
 
-Slate is not a traditional productivity app. It does not optimize for streaks, guilt, or maximum output. Instead, it determines the minimum effective execution plan based on current capacity.
+🔗 **Live Demo:** https://slate-xi-vert.vercel.app
+
+> Capacity → Rules → Execution
+
+A capacity-aware decision-support platform that helps people determine what they realistically have the capacity to execute, rather than simply tracking tasks.
+
+<!-- Place hero screenshot at: docs/images/dashboard.png -->
+<p align="center">
+  <img src="./docs/images/dashboard.png" alt="Slate Dashboard" width="900" />
+</p>
 
 ---
 
@@ -10,15 +19,39 @@ Slate is not a traditional productivity app. It does not optimize for streaks, g
 
 Slate follows a simple framework:
 
+```
 Capacity
 ↓
 Rules
 ↓
 Execution
+```
 
 The system first evaluates the user's current state, applies rule-based recommendations, and returns an executable plan that respects recovery, workload, and cognitive constraints.
 
 Low capacity is not failure. It triggers a smaller, intentional execution protocol.
+
+---
+
+## Screenshots
+
+<!-- Drop screenshot files into docs/images/ — filenames listed below each heading -->
+
+### Dashboard
+<!-- docs/images/dashboard.png -->
+![Dashboard](./docs/images/dashboard.png)
+
+### Recovery Intelligence
+<!-- docs/images/recovery.png -->
+![Recovery](./docs/images/recovery.png)
+
+### Logs & Analytics
+<!-- docs/images/logs.png -->
+![Logs](./docs/images/logs.png)
+
+### Focus Mode
+<!-- docs/images/focus-mode.png -->
+![Focus Mode](./docs/images/focus-mode.png)
 
 ---
 
@@ -47,6 +80,13 @@ Low capacity is not failure. It triggers a smaller, intentional execution protoc
 * Plan generation
 * Log saving
 * Toast notifications
+
+### Intelligence
+
+* Execution health score
+* Recovery risk trend analysis
+* Recommendation distribution insights
+* Execution pattern detection
 
 ### Logs
 
@@ -88,34 +128,36 @@ Low capacity is not failure. It triggers a smaller, intentional execution protoc
 
 ## Project Structure
 
+```
 app/
 components/
 lib/
 public/
+docs/images/
 ARCHITECTURE.md
 DECISIONS.md
 TODO.md
+```
 
 ---
 
 ## Current Version
 
-Slate v0.4 — Refactor & Stabilization complete
+**Slate v0.4 — Refactor & Stabilization complete**
 
-Completed:
-
-* Shared types extracted into types/
-* Business logic centralized in lib/
+* Shared types extracted into `types/`
+* Business logic centralized in `lib/`
 * Frontend performance audited and optimized
-* Homepage decomposed into components/home/
-* Daily Execution decomposed into components/daily/
-* Shell components organized into components/shell/
+* Homepage decomposed into `components/home/`
+* Daily Execution decomposed into `components/daily/`
+* Shell components organized into `components/shell/`
+* Intelligence layer: health score, recovery trends, pattern detection, recommendation insights
 
 ---
 
 ## Next
 
-Slate v0.5 — Intelligence
+**Slate v0.5 — Intelligence**
 
 ---
 
