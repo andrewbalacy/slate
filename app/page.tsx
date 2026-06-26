@@ -6,6 +6,7 @@ import type { SlateLog } from "@/types/logs";
 import { useToast } from "@/components/shell/ToastProvider";
 import FocusMode, { type FocusData } from "@/components/shell/FocusMode";
 import { deriveSystemState, computeInsights } from "@/components/home/helpers";
+import { computeHealthScore } from "@/lib/insights";
 import QuickActions from "@/components/home/QuickActions";
 import NextAction from "@/components/home/NextAction";
 import SystemState from "@/components/home/SystemState";
@@ -37,6 +38,7 @@ export default function Home() {
   useEffect(() => { setLogs(getLogs()); }, []);
 
   const insights = useMemo(() => computeInsights(logs), [logs]);
+  const healthScore = useMemo(() => computeHealthScore(logs), [logs]);
   const systemState = useMemo(() => logs[0] ? deriveSystemState(logs[0]) : null, [logs]);
   const recent = useMemo(() => logs.slice(0, 3), [logs]);
 
@@ -94,7 +96,7 @@ export default function Home() {
         {/* ── RIGHT COLUMN — system sidebar ───────────────────── */}
         <div className="flex flex-col gap-5" style={fade(phase, 3, 0.2)}>
           <SystemState systemState={systemState} />
-          <SystemInsights insights={insights} />
+          <SystemInsights insights={insights} healthScore={healthScore} />
           <EnergyTrend logs={logs} />
           <RecentActivity recent={recent} />
         </div>
