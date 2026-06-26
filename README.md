@@ -35,23 +35,38 @@ Low capacity is not failure. It triggers a smaller, intentional execution protoc
 
 ## Screenshots
 
-<!-- Drop screenshot files into docs/images/ — filenames listed below each heading -->
-
 ### Dashboard
-<!-- docs/images/dashboard.png -->
 ![Dashboard](./docs/images/dashboard.png)
 
-### Recovery Intelligence
-<!-- docs/images/recovery.png -->
-![Recovery](./docs/images/recovery.png)
+*OS-inspired interface featuring recovery intelligence, system insights, and execution analytics.*
+
+---
+
+### Daily Execution — Configuration
+![Daily Execution Configuration](./docs/images/daily-execution-config.png)
+
+*Configure energy, workload, and constraints to generate capacity-aware recommendations.*
+
+---
+
+### Daily Execution — Generated Plan
+![Daily Execution Plan](./docs/images/daily-execution-plan.png)
+
+*Slate translates system state into actionable recommendations and structured execution plans.*
+
+---
 
 ### Logs & Analytics
-<!-- docs/images/logs.png -->
-![Logs](./docs/images/logs.png)
+![Logs & Analytics](./docs/images/logs-analytics.png)
+
+*Historical logging, behavioral trends, and execution health analytics that surface patterns across recovery and workload.*
+
+---
 
 ### Focus Mode
-<!-- docs/images/focus-mode.png -->
 ![Focus Mode](./docs/images/focus-mode.png)
+
+*An immersive, distraction-reduced environment that surfaces a single objective and encourages deliberate execution.*
 
 ---
 
