@@ -158,21 +158,22 @@ TODO.md
 
 ## Current Version
 
-**Slate v0.4 — Refactor & Stabilization complete**
+Slate v0.6 — Adaptive Execution Intelligence
 
-* Shared types extracted into `types/`
-* Business logic centralized in `lib/`
-* Frontend performance audited and optimized
-* Homepage decomposed into `components/home/`
-* Daily Execution decomposed into `components/daily/`
-* Shell components organized into `components/shell/`
-* Intelligence layer: health score, recovery trends, pattern detection, recommendation insights
+- Shared types extracted into `types/`
+- Business logic centralized in `lib/`
+- Frontend performance audited and optimized
+- Homepage decomposed into `components/home/`
+- Daily Execution decomposed into `components/daily/`
+- Shell components organized into `components/shell/`
+- Intelligence layer: health score, recovery trends, pattern detection, recommendation insights
+- Focus Mode, command palette, and toast notifications added
 
 ---
 
 ## Next
 
-**Slate v0.5 — Intelligence**
+Slate v0.7 — Completion Tracking
 
 ---
 
