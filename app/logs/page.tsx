@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getLogs } from "@/lib/slateStorage";
 import type { SlateLog } from "@/types/logs";
+import { computeRecommendationInsights } from "@/lib/recommendations";
 
 function EnergyTrend({ logs }: { logs: SlateLog[] }) {
   const recent = [...logs].reverse().slice(0, 7);
@@ -121,6 +122,7 @@ export default function Logs() {
   }, []);
 
   const review = computeReview(logs);
+  const recInsights = computeRecommendationInsights(logs);
 
   const panelStyle = {
     background: "linear-gradient(160deg, rgba(255,255,255,0.033) 0%, rgba(255,255,255,0.013) 100%)",
@@ -199,6 +201,53 @@ export default function Logs() {
             </p>
           </div>
           <EnergyTrend logs={logs} />
+        </div>
+
+        {/* Recommendation Insights */}
+        <div
+          className="noise relative w-full rounded-2xl border border-white/[0.08] overflow-hidden animate-slide-up"
+          style={{ ...panelStyle, animationDelay: "0.09s" }}
+        >
+          <div className="px-6 py-4 border-b border-white/[0.06]">
+            <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/28">
+              recommendation insights
+            </p>
+          </div>
+
+          {recInsights ? (
+            <>
+              <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
+                <p className="text-[9px] font-medium tracking-[0.16em] uppercase text-white/22">dominant mode</p>
+                <p className="text-sm font-mono text-white/55">{recInsights.mostCommon}</p>
+              </div>
+
+              <div className="flex flex-col divide-y divide-white/[0.05]">
+                {recInsights.distribution.map(({ mode, count, pct }) => (
+                  <div key={mode} className="px-6 py-3 flex items-center justify-between">
+                    <p className={`text-[9px] font-medium tracking-[0.12em] uppercase ${count > 0 ? "text-white/30" : "text-white/14"}`}>
+                      {mode}
+                    </p>
+                    <div className="flex items-baseline gap-2.5">
+                      <span className={`text-sm font-mono ${count > 0 ? "text-white/55" : "text-white/18"}`}>{count}</span>
+                      <span className="text-[9px] font-mono text-white/22 w-7 text-right">{pct}%</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="px-6 py-4 border-t border-white/[0.06] flex flex-col gap-1.5">
+                <div className="flex items-center justify-between">
+                  <p className="text-[9px] font-medium tracking-[0.16em] uppercase text-white/22">distribution</p>
+                  <p className="text-[9px] font-mono text-white/38">{recInsights.stability}</p>
+                </div>
+                <p className="text-[9px] text-white/22 leading-relaxed">{recInsights.stabilityExplanation}</p>
+              </div>
+            </>
+          ) : (
+            <div className="px-6 py-5">
+              <p className="text-[10px] font-mono text-white/18 italic">Collecting execution memory...</p>
+            </div>
+          )}
         </div>
 
         {/* Log entries */}

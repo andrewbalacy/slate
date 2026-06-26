@@ -71,7 +71,7 @@ export default function SystemInsights({
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-1.5 pt-1 border-t border-white/[0.05]">
+                <div className="flex flex-col gap-1.5 pt-4 border-t border-white/[0.05]">
                   {healthScore.factors.map((f) => (
                     <p key={f} className="text-[9px] font-mono text-white/22 leading-relaxed">· {f}</p>
                   ))}
