@@ -7,12 +7,14 @@ import { useToast } from "@/components/shell/ToastProvider";
 import FocusMode, { type FocusData } from "@/components/shell/FocusMode";
 import { deriveSystemState, computeInsights } from "@/components/home/helpers";
 import { computeHealthScore } from "@/lib/insights";
+import { detectPatterns } from "@/lib/patterns";
 import QuickActions from "@/components/home/QuickActions";
 import NextAction from "@/components/home/NextAction";
 import SystemState from "@/components/home/SystemState";
 import SystemInsights from "@/components/home/SystemInsights";
 import EnergyTrend from "@/components/home/EnergyTrend";
 import RecentActivity from "@/components/home/RecentActivity";
+import SystemPatterns from "@/components/home/SystemPatterns";
 
 function fade(phase: number, threshold: number, delay = 0) {
   return {
@@ -39,6 +41,7 @@ export default function Home() {
 
   const insights = useMemo(() => computeInsights(logs), [logs]);
   const healthScore = useMemo(() => computeHealthScore(logs), [logs]);
+  const patterns = useMemo(() => detectPatterns(logs), [logs]);
   const systemState = useMemo(() => logs[0] ? deriveSystemState(logs[0]) : null, [logs]);
   const recent = useMemo(() => logs.slice(0, 3), [logs]);
 
@@ -99,6 +102,7 @@ export default function Home() {
           <SystemInsights insights={insights} healthScore={healthScore} />
           <EnergyTrend logs={logs} />
           <RecentActivity recent={recent} />
+          <SystemPatterns patterns={patterns} />
         </div>
       </div>
 
