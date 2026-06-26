@@ -1,148 +1,26 @@
 # Slate TODO
 
-## Immediate Priority
+## Completed — v0.4 Refactor & Stabilization
 
-### Performance Audit
+- Consolidated Slate engine into lib/slateEngine.ts
+- Added shared types under types/
+- Formalized storage layer in lib/slateStorage.ts
+- Audited and optimized frontend performance
+- Extracted homepage components into components/home/
+- Extracted Daily Execution components into components/daily/
+- Organized shell components into components/shell/
 
-Ask Claude Code to audit the app for performance issues.
+---
+
+## Next — v0.5 Intelligence
 
 Focus areas:
 
-- Unnecessary rerenders
-- Expensive CSS effects
-- Large shadows
-- Excessive backdrop blur usage
-- Heavy animations
-- Cursor aura performance
-- Focus Mode timer rerenders
-- Toast notification rerenders
-- Frequent localStorage reads
-- Large components that should be split
-- Memoization opportunities
-
-### Audit Prompt
-
-```text
-Audit my Next.js app for performance issues.
-
-Look specifically for:
-1. Unnecessary rerenders
-2. Expensive CSS effects
-3. Large shadows
-4. Excessive backdrop-blur/backdrop-filter usage
-5. Heavy animations
-6. Cursor aura performance
-7. Focus Mode timer rerenders
-8. Toast notification rerenders
-9. localStorage reads happening too often
-10. Large components that should be split or memoized
-
-Goals:
-- Keep the premium Slate OS aesthetic intact.
-- Do not remove major features.
-- Suggest and implement safe performance improvements.
-- Memoize components where useful.
-- Move repeated calculations into helper functions.
-- Avoid overengineering.
-- Keep the app smooth on older MacBooks.
-- Do not change visual design unless the effect is clearly too expensive.
-
-After changes, summarize what was optimized.
-```
-
-Commit:
-
-```bash
-git add .
-git commit -m "Audit and optimize Slate frontend performance"
-```
-
----
-
-## Refactor
-
-### Homepage Components
-
-Target structure:
-
-```text
-components/
-└── home/
-    ├── CommandCenterLayout.tsx
-    ├── QuickActions.tsx
-    ├── NextAction.tsx
-    ├── SystemState.tsx
-    ├── SystemInsights.tsx
-    ├── EnergyTrend.tsx
-    └── RecentActivity.tsx
-```
-
-### Daily Components
-
-Target structure:
-
-```text
-components/
-└── daily/
-    ├── DailyExecutionForm.tsx
-    ├── EnergySelector.tsx
-    ├── SegmentedControl.tsx
-    ├── SystemStatePreview.tsx
-    ├── RuleExplanation.tsx
-    └── RecommendationProtocol.tsx
-```
-
-### Shell Components
-
-Target structure:
-
-```text
-components/
-└── shell/
-    ├── SlateShell.tsx
-    ├── CommandPalette.tsx
-    ├── CursorAura.tsx
-    ├── ToastProvider.tsx
-    ├── FocusMode.tsx
-    └── SystemClock.tsx
-```
-
----
-
-## Logic Extraction
-
-Move reusable logic into:
-
-```text
-lib/
-├── slateEngine.ts
-├── systemState.ts
-├── recommendationProtocols.ts
-├── insights.ts
-├── logStorage.ts
-└── nextAction.ts
-```
-
----
-
-## Shared Types
-
-Create:
-
-```text
-types/
-├── slate.ts
-└── logs.ts
-```
-
-Suggested types:
-
-- DailyInput
-- SlateLog
-- SystemState
-- Recommendation
-- RecommendationProtocol
-- NextAction
+- Pattern detection
+- Recovery risk trends
+- Workday fatigue patterns
+- Recommendation accuracy improvements
+- Execution health score
 
 ---
 
@@ -183,7 +61,7 @@ Suggested types:
 
 # Roadmap
 
-## v0.4 — Refactor & Stabilization
+## v0.4 — Refactor & Stabilization ✓
 
 - Component cleanup
 - Performance optimization

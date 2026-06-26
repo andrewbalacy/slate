@@ -100,15 +100,22 @@ TODO.md
 
 ## Current Version
 
-Slate v0.4 — Refactor & Stabilization
+Slate v0.4 — Refactor & Stabilization complete
 
-Current priorities:
+Completed:
 
-* Shared types
-* Logic extraction
-* Performance optimization
-* Component decomposition
-* Improved data model
+* Shared types extracted into types/
+* Business logic centralized in lib/
+* Frontend performance audited and optimized
+* Homepage decomposed into components/home/
+* Daily Execution decomposed into components/daily/
+* Shell components organized into components/shell/
+
+---
+
+## Next
+
+Slate v0.5 — Intelligence
 
 ---
 

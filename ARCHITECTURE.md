@@ -18,7 +18,7 @@ Execution
 
 ## Current Version
 
-**Slate v0.3 — Command Center + Focus Mode**
+**Slate v0.4 — Refactor & Stabilization complete**
 
 ---
 
