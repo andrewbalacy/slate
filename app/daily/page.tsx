@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { generateSlatePlan, type SlatePlan, type CognitiveLoad, type YesNo, type TrainingToday, type SlateInput } from "./lib/slateEngine";
+import { generateSlatePlan, type SlatePlan, type CognitiveLoad, type YesNo, type TrainingToday, type SlateInput } from "@/lib/slateEngine";
 import { saveLog } from "@/lib/slateStorage";
 import { useToast } from "@/components/ToastProvider";
 

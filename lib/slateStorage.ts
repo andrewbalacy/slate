@@ -1,4 +1,4 @@
-import type { SlateInput, SlatePlan } from "@/app/daily/lib/slateEngine";
+import type { SlateInput, SlatePlan } from "@/lib/slateEngine";
 
 export type SlateLog = {
   id: string;
