@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getLogs, type SlateLog } from "@/lib/slateStorage";
+import { getLogs } from "@/lib/slateStorage";
+import type { SlateLog } from "@/types/logs";
 
 function EnergyTrend({ logs }: { logs: SlateLog[] }) {
   const recent = [...logs].reverse().slice(0, 7);

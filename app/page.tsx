@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState, useEffect, useMemo, useCallback, memo } from "react";
-import { getLogs, type SlateLog } from "@/lib/slateStorage";
+import { getLogs } from "@/lib/slateStorage";
+import type { SlateLog } from "@/types/logs";
 import { useToast } from "@/components/ToastProvider";
 import FocusMode, { type FocusData } from "@/components/FocusMode";
 

@@ -1,11 +1,5 @@
-import type { SlateInput, SlatePlan } from "@/lib/slateEngine";
-
-export type SlateLog = {
-  id: string;
-  timestamp: number;
-  input: SlateInput;
-  plan: SlatePlan;
-};
+import type { SlateInput, SlatePlan } from "@/types/slate";
+import type { SlateLog } from "@/types/logs";
 
 const KEY = "slate_logs";
 
