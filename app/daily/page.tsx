@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { generateSlatePlan } from "@/lib/slateEngine";
 import type { SlatePlan, CognitiveLoad, YesNo, TrainingToday, SlateInput } from "@/types/slate";
 import { saveLog } from "@/lib/slateStorage";
-import { useToast } from "@/components/ToastProvider";
+import { useToast } from "@/components/shell/ToastProvider";
 import { DailyExecutionForm, type DailyFormState } from "@/components/daily/DailyExecutionForm";
 import { GeneratedPlan } from "@/components/daily/GeneratedPlan";
 

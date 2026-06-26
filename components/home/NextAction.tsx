@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { memo, useState } from "react";
 import type { SlateLog } from "@/types/logs";
-import type { FocusData } from "@/components/FocusMode";
+import type { FocusData } from "@/components/shell/FocusMode";
 import { deriveSystemState, panel } from "./helpers";
 
 const NEXT_ACTION_COPY: Record<string, string> = {

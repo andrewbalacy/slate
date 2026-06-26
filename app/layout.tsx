@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ViewTransition } from "react";
-import SystemClock from "@/components/SystemClock";
-import CommandPalette from "@/components/CommandPalette";
-import CursorAura from "@/components/CursorAura";
-import ToastProvider from "@/components/ToastProvider";
+import SystemClock from "@/components/shell/SystemClock";
+import CommandPalette from "@/components/shell/CommandPalette";
+import CursorAura from "@/components/shell/CursorAura";
+import ToastProvider from "@/components/shell/ToastProvider";
 import "./globals.css";
 
 const geistSans = Geist({

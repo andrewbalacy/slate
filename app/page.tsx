@@ -3,8 +3,8 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { getLogs } from "@/lib/slateStorage";
 import type { SlateLog } from "@/types/logs";
-import { useToast } from "@/components/ToastProvider";
-import FocusMode, { type FocusData } from "@/components/FocusMode";
+import { useToast } from "@/components/shell/ToastProvider";
+import FocusMode, { type FocusData } from "@/components/shell/FocusMode";
 import { deriveSystemState, computeInsights } from "@/components/home/helpers";
 import QuickActions from "@/components/home/QuickActions";
 import NextAction from "@/components/home/NextAction";
