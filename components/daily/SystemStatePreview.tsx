@@ -1,6 +1,7 @@
 "use client";
 
 import type { CognitiveLoad, YesNo } from "@/types/slate";
+import { deriveProtocol } from "@/lib/protocol";
 
 export function derivePreview(energy: number | null, cognitiveLoad: CognitiveLoad | "", workToday: YesNo | "") {
   if (!energy && !cognitiveLoad && !workToday) return null;
@@ -9,10 +10,7 @@ export function derivePreview(energy: number | null, cognitiveLoad: CognitiveLoa
   const recoveryRisk = cognitiveLoad === "high" && energy !== null && energy <= 5 ? "Elevated" : cognitiveLoad && energy !== null ? "Low" : "—";
   const recommendation =
     energy !== null && cognitiveLoad && workToday
-      ? workToday === "no" ? "Recovery"
-        : energy <= 4 || (cognitiveLoad === "high" && energy <= 5) ? "Strict Floor"
-        : energy >= 8 ? "Deep Work"
-        : "Standard Plan"
+      ? deriveProtocol({ date: "", day: "", energy, cognitiveLoad, workToday })
       : "—";
   return { capacity, mode, recoveryRisk, recommendation };
 }

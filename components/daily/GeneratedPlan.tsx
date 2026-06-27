@@ -1,9 +1,11 @@
 "use client";
 
-import type { SlatePlan } from "@/types/slate";
+import type { SlatePlan, SlateInput } from "@/types/slate";
+import { InspectDecision } from "./InspectDecision";
 
-export function GeneratedPlan({ plan, saved, onSave }: {
+export function GeneratedPlan({ plan, input, saved, onSave }: {
   plan: SlatePlan;
+  input: SlateInput;
   saved: boolean;
   onSave: () => void;
 }) {
@@ -40,6 +42,8 @@ export function GeneratedPlan({ plan, saved, onSave }: {
           <p className="text-xs text-white/22 tracking-[0.06em]">{plan.closingLine}</p>
         </div>
       </div>
+
+      <InspectDecision input={input} />
 
       <button
         type="button"

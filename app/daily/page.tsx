@@ -90,10 +90,11 @@ export default function DailyExecution() {
           onGenerate={handleGenerate}
         />
 
-        {plan && (
+        {plan && lastInput && (
           <GeneratedPlan
             key={plan.title + plan.closingLine}
             plan={plan}
+            input={lastInput}
             saved={saved}
             onSave={handleSave}
           />
