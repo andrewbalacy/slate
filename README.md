@@ -158,16 +158,34 @@ TODO.md
 
 ## Current Version
 
-Slate v0.6 — Adaptive Execution Intelligence
+### Slate v0.6.x — Adaptive Execution Intelligence
 
+#### Architecture
 - Shared types extracted into `types/`
 - Business logic centralized in `lib/`
-- Frontend performance audited and optimized
 - Homepage decomposed into `components/home/`
 - Daily Execution decomposed into `components/daily/`
 - Shell components organized into `components/shell/`
-- Intelligence layer: health score, recovery trends, pattern detection, recommendation insights
-- Focus Mode, command palette, and toast notifications added
+- Shared protocol derivation extracted into a single source of truth
+
+#### Intelligence Layer
+- Health score and recovery trend analysis
+- Pattern detection and recommendation insights
+- Recommendation confidence scoring
+- Tomorrow capacity projection
+
+#### Explainability
+- Inspect Decision panel
+- Transparent recommendation reasoning
+- Decision analysis and limiting factor detection
+- Tradeoff analysis (recommended plan vs. attempting everything)
+- System rationale and adaptive opportunity recommendations
+
+#### UX
+- Focus Mode
+- Command palette
+- Toast notifications
+- Frontend performance audit and optimization
 
 ---
 
