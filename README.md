@@ -33,6 +33,19 @@ Low capacity is not failure. It triggers a smaller, intentional execution protoc
 
 ---
 
+# Platform Capabilities
+
+- Capacity-aware decision support
+- Adaptive execution protocols
+- Explainable recommendations
+- Recovery intelligence
+- Recommendation confidence scoring
+- Pattern detection and historical insights
+- Execution tradeoff analysis
+- Modular architecture and reusable intelligence layer
+
+---
+
 ## Screenshots
 
 ### Dashboard
