@@ -69,7 +69,7 @@ Focus areas:
 - Logic extraction
 - Better data model
 
-## v0.5 — Intelligence
+## v0.5 — Intelligence ✓
 
 - Pattern detection
 - Recovery risk trends
@@ -77,7 +77,7 @@ Focus areas:
 - Recommendation accuracy improvements
 - Execution health score
 
-## v0.6 — Completion Tracking
+## v0.6 — Completion Tracking 
 
 - Did you execute the plan?
 - Not yet / partial / complete
